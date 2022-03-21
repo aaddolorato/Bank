@@ -1,7 +1,8 @@
 package com.accenture.bank.application.service;
-
-import java.sql.Date;
-
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.accenture.bank.application.entity.BankAccount;
 import com.accenture.bank.application.entity.Transaction;
-import com.accenture.bank.application.model.RequestBankAccount;
 import com.accenture.bank.application.model.RequestTransaction;
 import com.accenture.bank.application.model.ResponseTransaction;
 import com.accenture.bank.application.repository.BankAccountRepository;
@@ -27,8 +27,7 @@ public class TransactionService {
 
 	@Autowired
 	TransactionRepository transactionRepository;
-	@Autowired
-	BankAccountService baService;
+	
 	@Autowired
 	BankAccountRepository bankAccountRepository;
 
@@ -45,10 +44,8 @@ public class TransactionService {
 				ResponseTransaction responseTransaction = new ResponseTransaction();
 				mapper.map(t, responseTransaction);
 				BankAccount bankAccount = bankAccountRepository.findById(id).get();
-				RequestBankAccount requestBankAccount = new RequestBankAccount();
-				mapper.map(bankAccount, requestBankAccount);
-				requestBankAccount.setBalance(amount + bankAccount.getBalance());
-				baService.update(id, requestBankAccount);
+				bankAccount.setBalance(amount + bankAccount.getBalance());
+				bankAccountRepository.save(bankAccount);
 				log.info("Deposito effettuato");
 				return responseTransaction;
 			}
@@ -99,11 +96,14 @@ public class TransactionService {
 	}
 
 	public List<ResponseTransaction> getByIdBankAccount(int id){
-		List<ResponseTransaction> transactionList = getAllTransactions();
+		List<Transaction> transactionList = transactionRepository.findAll();
 		List<ResponseTransaction> transactionsBankAccount = new ArrayList<ResponseTransaction>();
-		for(ResponseTransaction t : transactionList)
+		ModelMapper mapper = new ModelMapper();
+		for(Transaction t : transactionList)
 			if(t.getIdBankAccount()==id) {
-				transactionsBankAccount.add(t);
+				ResponseTransaction responseTransaction = new ResponseTransaction();
+				mapper.map(t, responseTransaction);
+				transactionsBankAccount.add(responseTransaction);
 			}
 		if(transactionsBankAccount.isEmpty()) {
 			log.error("Non esistono transazioni per il conto con id {}", id, new ResponseStatusException(HttpStatus.NOT_FOUND));
@@ -115,13 +115,16 @@ public class TransactionService {
 
 	public ResponseTransaction getLastByIdBankAccount(int id) {
 		if(bankAccountRepository.existsById(id)) {
-			List<ResponseTransaction> transactionsBankAccount = getAllTransactions();
+			List<Transaction> transactionsBankAccount = transactionRepository.findAll();
 			ResponseTransaction lastTransaction = new ResponseTransaction();
-			for(ResponseTransaction t : transactionsBankAccount) {
+			ModelMapper mapper = new ModelMapper();
+			for(Transaction t : transactionsBankAccount) {
 				if(t.getIdBankAccount()==id) {
-					lastTransaction = t;
+					ResponseTransaction responseTransaction = new ResponseTransaction();
+					mapper.map(t, responseTransaction);
+					lastTransaction = responseTransaction;
 					if(t.getDateTransaction().after(lastTransaction.getDateTransaction())) {
-						lastTransaction = t;
+						lastTransaction = responseTransaction;
 					}
 				}
 			}
@@ -134,27 +137,36 @@ public class TransactionService {
 		}
 	}
 
-	public ResponseTransaction withdraw(int amount, int id) {
+	public ResponseTransaction withdraw(int amount, int id) throws ParseException {
 		if(bankAccountRepository.existsById(id)) {
 			BankAccount bankAccount = bankAccountRepository.findById(id).get();
 			if(amount>0 && amount<=bankAccount.getBalance()) {
 				Transaction t = new Transaction();
 				t.setAmount(amount);
-				t.setDateTransaction(new Date(System.currentTimeMillis()));
+				DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss:SSS");
+				Date date = new Date();
+				String string = sdf.format(date);
+				Date d = sdf.parse(string);
+				t.setDateTransaction(d);
 				t.setIdBankAccount(id);
 				t.setType("withdraw");
 				transactionRepository.save(t);
 				ModelMapper mapper = new ModelMapper();
 				ResponseTransaction responseTransaction = new ResponseTransaction();
 				mapper.map(t, responseTransaction);
-				RequestBankAccount rqba = new RequestBankAccount();
-				rqba.setBalance(bankAccount.getBalance() - amount);
-				baService.update(id, rqba);
+				bankAccount.setBalance(bankAccount.getBalance() - amount);
+				bankAccountRepository.save(bankAccount);
 				log.info("Operazione effettuata");
 				return responseTransaction;
 			}
+			else {
+				log.error("Input invalido", new IllegalArgumentException());
+				return null;
+			}
 		}
-		log.error("Input invalido", new IllegalArgumentException());
+		else {
+			log.error("Conto non trovato");;
+		}
 		return null;
 	}
 

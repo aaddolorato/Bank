@@ -1,6 +1,6 @@
 package com.accenture.bank.application.entity;
 
-import java.sql.Date;
+import java.util.Date;
 
 
 import javax.persistence.Column;

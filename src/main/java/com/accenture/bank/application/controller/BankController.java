@@ -15,14 +15,18 @@ import com.accenture.bank.application.model.RequestBank;
 import com.accenture.bank.application.model.ResponseBank;
 import com.accenture.bank.application.service.BankService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
+@Tag(name = "Bank Controller", description = "Controller CRUD Bank")
 @RestController
 public class BankController {
 
 	@Autowired
 	private BankService bankService;
 	
-	@RequestMapping(value = "/banks", method = RequestMethod.GET)
+	@Operation(summary = "Banks List", description = "Shows all Banks details")
+	@RequestMapping(value = "/banks", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<Object> getBanks(){
 		List<ResponseBank> banksList = bankService.getAllBanks();
 		if(banksList==null) {
@@ -32,6 +36,7 @@ public class BankController {
 
 	}
 	
+	@Operation(summary = "Bank", description = "Shows the specified (by its Id) Bank's details")
 	@RequestMapping(value = "/banks/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Object> getBankById(@PathVariable int id) {
 		ResponseBank responseBank = bankService.getBankById(id);
@@ -41,24 +46,27 @@ public class BankController {
 		return ResponseEntity.ok(responseBank);
 	}
 	
+	@Operation(summary = "Add Bank", description = "Adds a new Bank and shows its details")
 	@RequestMapping(value = "/banks/save", method = RequestMethod.POST)
 	public ResponseEntity<Object> saveBank(@RequestBody RequestBank requestBank) {
 		ResponseBank responseBank = bankService.saveBank(requestBank);
 		if(responseBank==null) {
 			return ResponseEntity.status(HttpStatus.ALREADY_REPORTED).body("La banca è già presente nel sistema.");
 		}
-		return new ResponseEntity<>("Banca salvata con successo \n" + responseBank, HttpStatus.OK);
+		return new ResponseEntity<>(responseBank, HttpStatus.OK);
 	}
 	
+	@Operation(summary = "Update Bank", description = "Updates the specified (by its Id) Bank and shows its details ")
 	@RequestMapping(value = "/banks/save/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Object> updateBank(@PathVariable int id, @RequestBody RequestBank requestBank) {
 		ResponseBank responseBank = bankService.updateBank(id, requestBank);
 		if(responseBank==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Non è possibile aggiornare una banca non presente nel sistema.");
 		}
-		return new ResponseEntity<>("Banca aggiornata con successo. \n" + responseBank, HttpStatus.OK);
+		return new ResponseEntity<>(responseBank, HttpStatus.OK);
 	}
 	
+	@Operation(summary = "Delete Bank", description = "Deletes the specified (by its Id) Bank")
 	@RequestMapping(value = "/banks/delete/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> deleteBank(@PathVariable int id) {
 		ResponseBank responseBank = bankService.removeBank(id);

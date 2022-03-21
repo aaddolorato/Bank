@@ -77,9 +77,9 @@ public class DepositorService {
 	}
 
 	public ResponseDepositor getByCf(String codFisc) {
-		List<ResponseDepositor> depositorsList = getAllDepositors();
+		List<Depositor> depositorsList = depositorRepository.findAll();
 		ModelMapper mapper = new ModelMapper();
-		for(ResponseDepositor depositor : depositorsList)
+		for(Depositor depositor : depositorsList)
 			if(depositor.getCodFisc().equals(codFisc)) {
 				ResponseDepositor responseDepositor = new ResponseDepositor();
 				mapper.map(depositor, responseDepositor);

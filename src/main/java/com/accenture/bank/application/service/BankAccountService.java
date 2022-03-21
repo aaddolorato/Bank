@@ -13,6 +13,7 @@ import com.accenture.bank.application.entity.BankAccount;
 import com.accenture.bank.application.model.RequestBankAccount;
 import com.accenture.bank.application.model.ResponseBankAccount;
 import com.accenture.bank.application.repository.BankAccountRepository;
+import com.accenture.bank.application.repository.DepositorRepository;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,7 +25,8 @@ public class BankAccountService {
 	private BankAccountRepository baRepository;
 
 	@Autowired
-	private DepositorService depositorService;
+	private DepositorRepository depositorRepository;
+	
 
 	public List<ResponseBankAccount> getAllBankAccounts(){
 		List<BankAccount> bankAccounts = baRepository.findAll();
@@ -62,25 +64,29 @@ public class BankAccountService {
 	}
 
 	public List<ResponseBankAccount> getByIdDepositor(int id){
-		List<ResponseBankAccount> responseBankAccounts = getAllBankAccounts();		
-		List<ResponseBankAccount> responseDepositorBankAccounts = new ArrayList<ResponseBankAccount>();
-		for(ResponseBankAccount responseBankAccount : responseBankAccounts) {
-			if(responseBankAccount.getIdDepositor()==id) {
-				responseDepositorBankAccounts.add(responseBankAccount);
+		List<BankAccount> bankAccounts = baRepository.findAll();		
+		List<ResponseBankAccount> depositorBankAccounts = new ArrayList<ResponseBankAccount>();
+		ModelMapper mapper = new ModelMapper();
+		for(BankAccount bankAccount : bankAccounts) {
+			if(bankAccount.getIdDepositor()==id) {
+				ResponseBankAccount responseBankAccount = new ResponseBankAccount();
+				mapper.map(bankAccount, responseBankAccount);
+				depositorBankAccounts.add(responseBankAccount);
 			}
 		}
-		if(responseDepositorBankAccounts.isEmpty()) {
+		if(depositorBankAccounts.isEmpty()) {
 			log.error("Non ci sono conti associati al correntista con id {}.", id, new ResponseStatusException(HttpStatus.NOT_FOUND));
 			return null;
 		}
 		else {
 			log.info("Lista dei conti associati al correntista con id {}.", id);
-			return responseDepositorBankAccounts;
+			return depositorBankAccounts;
 		}
 	}
 
+	
 	public ResponseBankAccount addAccount(RequestBankAccount requestBankAccount) {
-		if(depositorService.getById(requestBankAccount.getIdDepositor())!=null) {
+		if(depositorRepository.existsById(requestBankAccount.getIdDepositor())) {
 			int iban = (int)(Math.random()*10000);
 			while(existingIban(iban)!=null) {
 				iban = (int)(Math.random()*10000);
@@ -116,9 +122,12 @@ public class BankAccountService {
 	}
 
 	public ResponseBankAccount getAccountByIban(int iban) {
-		List<ResponseBankAccount> bankAccounts = getAllBankAccounts();
-		for(ResponseBankAccount responseBankAccount : bankAccounts) {
-			if(responseBankAccount.getIban()==iban) {
+		List<BankAccount> bankAccounts = baRepository.findAll();
+		ModelMapper mapper = new ModelMapper();
+		for(BankAccount bankAccount : bankAccounts) {
+			if(bankAccount.getIban()==iban) {
+				ResponseBankAccount responseBankAccount = new ResponseBankAccount();
+				mapper.map(bankAccount, responseBankAccount);
 				log.info("Conto recuperato. Dettagli \n{}", responseBankAccount);
 				return responseBankAccount;
 			}
