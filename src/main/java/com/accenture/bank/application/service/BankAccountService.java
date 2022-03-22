@@ -2,6 +2,8 @@ package com.accenture.bank.application.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.Random;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,21 +29,24 @@ public class BankAccountService {
 	@Autowired
 	private DepositorRepository depositorRepository;
 	
+	private static final Random random = new Random();
+	
 
 	public List<ResponseBankAccount> getAllBankAccounts(){
 		List<BankAccount> bankAccounts = baRepository.findAll();
+		ModelMapper mapper = new ModelMapper();
+		ResponseBankAccount responseBankAccount = new ResponseBankAccount();
+		List<ResponseBankAccount> responseBankAccounts = new ArrayList<>();
+		for(BankAccount bankAccount : bankAccounts) {
+			mapper.map(bankAccount, responseBankAccount);
+			responseBankAccounts.add(responseBankAccount);
+		}
 		if(bankAccounts.isEmpty()) {
 			log.error("Non è stato possibile recuperare la lista di conti bancari", new ResponseStatusException(HttpStatus.NOT_FOUND));
-			return null;
+			return responseBankAccounts;
 		}
 		else {
-			List<ResponseBankAccount> responseBankAccounts = new ArrayList<ResponseBankAccount>();
-			ModelMapper mapper = new ModelMapper();
-			for(BankAccount bankAccount : bankAccounts) {
-				ResponseBankAccount responseBankAccount = new ResponseBankAccount();
-				mapper.map(bankAccount, responseBankAccount);
-				responseBankAccounts.add(responseBankAccount);
-			}
+			
 			log.info("Lista delle banche recuperata.");
 			return responseBankAccounts;
 		}
@@ -49,12 +54,13 @@ public class BankAccountService {
 	}
 
 	public ResponseBankAccount getAccountById(int id) {
-		if(!baRepository.existsById(id)) {
+		Optional<BankAccount> optionalBankAccount = baRepository.findById(id);
+		if(optionalBankAccount.isEmpty()) {
 			log.error("Il conto con id {} non è presente nel sistema.", id, new ResponseStatusException(HttpStatus.NOT_FOUND));
 			return null;
 		}
 		else {
-			BankAccount bankAccount = baRepository.findById(id).get();
+			BankAccount bankAccount = optionalBankAccount.get();
 			ResponseBankAccount responseBankAccount = new ResponseBankAccount();
 			ModelMapper mapper = new ModelMapper();
 			mapper.map(bankAccount, responseBankAccount);
@@ -65,7 +71,7 @@ public class BankAccountService {
 
 	public List<ResponseBankAccount> getByIdDepositor(int id){
 		List<BankAccount> bankAccounts = baRepository.findAll();		
-		List<ResponseBankAccount> depositorBankAccounts = new ArrayList<ResponseBankAccount>();
+		List<ResponseBankAccount> depositorBankAccounts = new ArrayList<>();
 		ModelMapper mapper = new ModelMapper();
 		for(BankAccount bankAccount : bankAccounts) {
 			if(bankAccount.getIdDepositor()==id) {
@@ -76,7 +82,7 @@ public class BankAccountService {
 		}
 		if(depositorBankAccounts.isEmpty()) {
 			log.error("Non ci sono conti associati al correntista con id {}.", id, new ResponseStatusException(HttpStatus.NOT_FOUND));
-			return null;
+			return depositorBankAccounts;
 		}
 		else {
 			log.info("Lista dei conti associati al correntista con id {}.", id);
@@ -87,9 +93,10 @@ public class BankAccountService {
 	
 	public ResponseBankAccount addAccount(RequestBankAccount requestBankAccount) {
 		if(depositorRepository.existsById(requestBankAccount.getIdDepositor())) {
-			int iban = (int)(Math.random()*10000);
+
+			int iban = random.nextInt()*10000;
 			while(existingIban(iban)!=null) {
-				iban = (int)(Math.random()*10000);
+				iban = random.nextInt()*10000;
 			}
 			BankAccount bankAccount = new BankAccount();
 			ModelMapper mapper = new ModelMapper();
@@ -106,8 +113,9 @@ public class BankAccountService {
 	}
 
 	public ResponseBankAccount delete(int id) {
-		if(baRepository.existsById(id)) {
-			BankAccount bankAccount = baRepository.findById(id).get();
+		Optional<BankAccount> optionalBank = baRepository.findById(id);
+		if(optionalBank.isPresent()) {
+			BankAccount bankAccount = optionalBank.get();
 			baRepository.delete(bankAccount);
 			ResponseBankAccount responseBankAccount = new ResponseBankAccount();
 			ModelMapper mapper = new ModelMapper();
@@ -137,8 +145,9 @@ public class BankAccountService {
 	}
 
 	public int getSaldoById(int id) {
-		if(baRepository.existsById(id)) {
-			BankAccount bankAccount = baRepository.findById(id).get();
+		Optional<BankAccount> optionalBankAccount = baRepository.findById(id);
+		if(optionalBankAccount.isPresent()) {
+			BankAccount bankAccount = optionalBankAccount.get();
 			ModelMapper mapper = new ModelMapper();
 			ResponseBankAccount responseBankAccount = new ResponseBankAccount();
 			mapper.map(bankAccount, responseBankAccount);
@@ -152,8 +161,9 @@ public class BankAccountService {
 	}
 
 	public ResponseBankAccount update(int id, RequestBankAccount requestBankAccount) {
-		if(baRepository.existsById(id)) {
-			BankAccount bankAccount = baRepository.findById(id).get();
+		Optional<BankAccount> optionalBankAccount = baRepository.findById(id);
+		if(optionalBankAccount.isPresent()) {
+			BankAccount bankAccount = optionalBankAccount.get();
 			ModelMapper mapper = new ModelMapper();
 			mapper.map(requestBankAccount, bankAccount);
 			bankAccount.setIdAccount(id);
@@ -174,8 +184,9 @@ public class BankAccountService {
 	}
 
 	public float interestCalculation(int id, float p, float d) {
-		if(baRepository.existsById(id)) {
-			BankAccount bankAccount = baRepository.findById(id).get();
+		Optional<BankAccount> optionalBankAccount = baRepository.findById(id);
+		if(optionalBankAccount.isPresent()) {
+			BankAccount bankAccount = optionalBankAccount.get();
 			float interests = bankAccount.getBalance()*((p/100)*d);
 			log.info("Gli interessi maturati sono :{}", interests);
 			return interests;

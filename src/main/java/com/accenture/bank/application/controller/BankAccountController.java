@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.accenture.bank.application.model.RequestBankAccount;
@@ -25,9 +27,12 @@ public class BankAccountController {
 	@Autowired
 	private BankAccountService baService;
 	
+	private String msg = "Non ci sono conti con id";
+	private String msg2 = " nel sistema.";
+	
 	@Operation(summary = "Bank Account by Id Depositor", description = "Shows the Bank Account "
 			+ "linked to the Depositor with the specified ID")
-	@RequestMapping(value = "/accounts/depositors/{id}", method = RequestMethod.GET)
+	@GetMapping("/accounts/depositors/{id}")
 	public ResponseEntity<Object> getByIdDepositor(@PathVariable int id){
 		List<ResponseBankAccount> accountsByIdDepositor = baService.getByIdDepositor(id);
 		if(accountsByIdDepositor==null) {
@@ -37,7 +42,7 @@ public class BankAccountController {
 	}
 	
 	@Operation(summary = "Add Bank Accounts", description = "Adds the specified (by its Id) Bank Account and shows its details")
-	@RequestMapping(value = "/accounts/new", method = RequestMethod.POST)
+	@PostMapping("/accounts/new")
 	public ResponseEntity<Object> addAccount(@RequestBody RequestBankAccount requestBankAccount) {
 		ResponseBankAccount responseBankAccount = baService.addAccount(requestBankAccount);
 		if(responseBankAccount==null) {
@@ -47,7 +52,7 @@ public class BankAccountController {
 	}
 	
 	@Operation(summary = "Delete Bank Account", description = "Deletes the specified Bank Account")
-	@RequestMapping(value = "/accounts/delete/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/accounts/delete/{id}")
 	public ResponseEntity<Object> delete(@PathVariable int id) {
 		ResponseBankAccount responseBankAccount = baService.delete(id);
 		if(responseBankAccount==null) {
@@ -57,41 +62,41 @@ public class BankAccountController {
 	}
 	
 	@Operation(summary = "Bank Account By Iban", description = "Shows the specified (by its Iban) Bank Account's details")
-	@RequestMapping(value = "/accounts/iban/{iban}", method = RequestMethod.GET)
+	@GetMapping("/accounts/iban/{iban}")
 	public ResponseEntity<Object> getAccountByIban(@PathVariable int iban) {
 		ResponseBankAccount responseBankAccount = baService.getAccountByIban(iban);
 		if(responseBankAccount==null) {
-			return new ResponseEntity<>(" Non ci sono conti con iban " + iban + " nel sistema.", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(" Non ci sono conti con iban " + iban + msg2, HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(responseBankAccount, HttpStatus.OK);
 	}
 	
 	@Operation(summary = "Balance Bank Account", description = "Show the Balance of the specified (by its Id) Bank Account")
-	@RequestMapping(value = "/accounts/balance/{id}", method = RequestMethod.GET)
+	@GetMapping("/accounts/balance/{id}")
 	public ResponseEntity<Object> getSaldoById(@PathVariable int id) {
 		int balance = baService.getSaldoById(id);
 		if(balance==0) {
-			return new ResponseEntity<>(" Non ci sono conti con id " + id + " nel sistema.", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(msg + id + msg2, HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(balance, HttpStatus.OK);
 	}
 	
 	@Operation(summary = "Update Bank Account", description = "Updates the specified (by its Id) Bank Account")
-	@RequestMapping(value = "/accounts/update/{id}", method = RequestMethod.PUT)
+	@PutMapping("/accounts/update/{id}")
 	public ResponseEntity<Object> update(@PathVariable int id, @RequestBody RequestBankAccount requestBankAccount) {
 		ResponseBankAccount responseBankAccount = baService.update(id, requestBankAccount);
 		if(responseBankAccount==null) {
-			return new ResponseEntity<>(" Non ci sono conti con id " + id + " nel sistema.", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(msg + id + msg2, HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(responseBankAccount, HttpStatus.OK);
 	}
 	
 	@Operation(summary = "Interests Bank Account", description = "Calculates the specified (by its Id) Bank Account Interests")
-	@RequestMapping(value = "/accounts/interests/{id}/{p}/{d}", method = RequestMethod.GET)
+	@GetMapping("/accounts/interests/{id}/{p}/{d}")
 	public ResponseEntity<Object> interestCalculation(@PathVariable int id, @PathVariable float p, @PathVariable float d) {
 		float interests = baService.interestCalculation(id, p, d);
 		if(interests==0) {
-			return new ResponseEntity<>(" Non ci sono conti con id " + id + " nel sistema.", HttpStatus.NOT_FOUND);
+			return new ResponseEntity<>(msg + id + msg2, HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(interests, HttpStatus.OK);
 	}

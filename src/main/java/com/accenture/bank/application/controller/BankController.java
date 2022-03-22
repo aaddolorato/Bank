@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.accenture.bank.application.model.RequestBank;
@@ -26,7 +28,7 @@ public class BankController {
 	private BankService bankService;
 	
 	@Operation(summary = "Banks List", description = "Shows all Banks details")
-	@RequestMapping(value = "/banks", method = RequestMethod.GET, produces = "application/json")
+	@GetMapping("/banks")
 	public ResponseEntity<Object> getBanks(){
 		List<ResponseBank> banksList = bankService.getAllBanks();
 		if(banksList==null) {
@@ -37,7 +39,7 @@ public class BankController {
 	}
 	
 	@Operation(summary = "Bank", description = "Shows the specified (by its Id) Bank's details")
-	@RequestMapping(value = "/banks/{id}", method = RequestMethod.GET)
+	@GetMapping("/banks/{id}")
 	public ResponseEntity<Object> getBankById(@PathVariable int id) {
 		ResponseBank responseBank = bankService.getBankById(id);
 		if(responseBank==null) {
@@ -47,7 +49,7 @@ public class BankController {
 	}
 	
 	@Operation(summary = "Add Bank", description = "Adds a new Bank and shows its details")
-	@RequestMapping(value = "/banks/save", method = RequestMethod.POST)
+	@PostMapping("/banks/save")
 	public ResponseEntity<Object> saveBank(@RequestBody RequestBank requestBank) {
 		ResponseBank responseBank = bankService.saveBank(requestBank);
 		if(responseBank==null) {
@@ -57,7 +59,7 @@ public class BankController {
 	}
 	
 	@Operation(summary = "Update Bank", description = "Updates the specified (by its Id) Bank and shows its details ")
-	@RequestMapping(value = "/banks/save/{id}", method = RequestMethod.PUT)
+	@PutMapping("/banks/save/{id}")
 	public ResponseEntity<Object> updateBank(@PathVariable int id, @RequestBody RequestBank requestBank) {
 		ResponseBank responseBank = bankService.updateBank(id, requestBank);
 		if(responseBank==null) {
@@ -67,7 +69,7 @@ public class BankController {
 	}
 	
 	@Operation(summary = "Delete Bank", description = "Deletes the specified (by its Id) Bank")
-	@RequestMapping(value = "/banks/delete/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/banks/delete/{id}")
 	public ResponseEntity<Object> deleteBank(@PathVariable int id) {
 		ResponseBank responseBank = bankService.removeBank(id);
 		if(responseBank==null) {

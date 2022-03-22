@@ -2,6 +2,7 @@ package com.accenture.bank.application.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,9 +27,10 @@ public class DepositorService {
 	private DepositorRepository depositorRepository;
 
 	public ResponseDepositor getById(int id) {
-		if(depositorRepository.existsById(id)) {
+		Optional<Depositor> optionalDepositor = depositorRepository.findById(id);
+		if(optionalDepositor.isPresent()) {
 			ModelMapper mapper = new ModelMapper();
-			Depositor depositor = depositorRepository.findById(id).get();
+			Depositor depositor = optionalDepositor.get();
 			ResponseDepositor responseDepositor = new ResponseDepositor();
 			mapper.map(depositor, responseDepositor);
 			log.info("Dettagli correntista. \n" + responseDepositor);
@@ -43,26 +45,28 @@ public class DepositorService {
 
 	public List<ResponseDepositor> getAllDepositors(){
 		List<Depositor> depositorsList = depositorRepository.findAll();
+		ModelMapper mapper = new ModelMapper();
+		List<ResponseDepositor> responseDepositorsList = new ArrayList<>();
+		for(Depositor depositor : depositorsList) {
+			ResponseDepositor responseDepositor = new ResponseDepositor();
+			mapper.map(depositor, responseDepositor);
+			responseDepositorsList.add(responseDepositor);
+		}
 		if(depositorsList.isEmpty()) {
 			log.error("Non è stato possibile recuperare la lista dei correntisti.", new ResponseStatusException(HttpStatus.NOT_FOUND));
-			return null;
+			return responseDepositorsList;
 		}
 		else {
-			ModelMapper mapper = new ModelMapper();
-			List<ResponseDepositor> responseDepositorsList = new ArrayList<ResponseDepositor>();
-			for(Depositor depositor : depositorsList) {
-				ResponseDepositor responseDepositor = new ResponseDepositor();
-				mapper.map(depositor, responseDepositor);
-				responseDepositorsList.add(responseDepositor);
-			}
+			
 			log.info("Lista correntisti recuperata.");
 			return responseDepositorsList;
 		}
 	}
 
 	public ResponseDepositor delete(int id) {
-		if(depositorRepository.existsById(id)) {
-			Depositor depositor = depositorRepository.findById(id).get();
+		Optional<Depositor> optionalDepositor = depositorRepository.findById(id);
+		if(optionalDepositor.isPresent()) {
+			Depositor depositor = optionalDepositor.get();
 			depositorRepository.delete(depositor);
 			ModelMapper mapper = new ModelMapper();
 			ResponseDepositor responseDepositor = new ResponseDepositor();

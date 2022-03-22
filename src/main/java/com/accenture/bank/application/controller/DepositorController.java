@@ -5,10 +5,12 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.accenture.bank.application.model.RequestDepositor;
@@ -26,7 +28,7 @@ public class DepositorController {
 	private DepositorService depositorService;
 
 	@Operation(summary = "Depositors List", description = "Shows all Depositors details")
-	@RequestMapping(value = "/depositors", method = RequestMethod.GET)
+	@GetMapping("/depositors")
 	public ResponseEntity<Object> getAllDepositors(){
 		List<ResponseDepositor> responseDepositorsList = depositorService.getAllDepositors();
 		if(responseDepositorsList==null) {
@@ -37,7 +39,7 @@ public class DepositorController {
 	}
 
 	@Operation(summary = "Depositor By Id", description = "Shows the specified(by its Id) Depositor's details")
-	@RequestMapping(value = "/depositors/{id}", method = RequestMethod.GET)
+	@GetMapping("/depositors/{id}")
 	public ResponseEntity<Object> getById(@PathVariable int id) {
 		ResponseDepositor responseDepositor = depositorService.getById(id);
 		if(responseDepositor==null) {
@@ -47,7 +49,7 @@ public class DepositorController {
 	}
 
 	@Operation(summary = "Depositor By Fiscal Code", description = "Shows the specified(by its Fiscal Code) Depositor's details")
-	@RequestMapping(value = "/depositors/find/{codFisc}", method = RequestMethod.GET)
+	@GetMapping("/depositors/find/{codFisc}")
 	public ResponseEntity<Object> getByCf(@PathVariable String codFisc) {
 		ResponseDepositor responseDepositor = depositorService.getByCf(codFisc);
 		if(responseDepositor==null) {
@@ -57,7 +59,7 @@ public class DepositorController {
 	}
 
 	@Operation(summary = "Delete Depositor", description = "Deletes the specified(by its Id) Depositor")
-	@RequestMapping(value = "/depositors/delete/{id}", method = RequestMethod.DELETE)
+	@DeleteMapping("/depositors/delete/{id}")
 	public ResponseEntity<Object> delete(@PathVariable int id) {
 		ResponseDepositor responseDepositor = depositorService.delete(id);
 		if(responseDepositor==null) {
@@ -67,7 +69,7 @@ public class DepositorController {
 	}
 
 	@Operation(summary = "Add Depositor", description = "Adds new Depositor and shows its details")
-	@RequestMapping(value = "/depositors/save", method = RequestMethod.POST)
+	@PostMapping("/depositors/save")
 	public ResponseEntity<Object> addDepositor(@RequestBody RequestDepositor requestDepositor) {
 		ResponseDepositor responseDepositor = depositorService.addDepositor(requestDepositor);
 		if(responseDepositor==null) {
@@ -77,7 +79,7 @@ public class DepositorController {
 	}
 
 	@Operation(summary = "Update Depositor", description = "Updates the specified(by its Id) Depositor and shows its details")
-	@RequestMapping(value = "/depositors/save/{id}", method = RequestMethod.PUT)
+	@PutMapping("/depositors/save/{id}")
 	public ResponseEntity<Object> updateDepositor(@PathVariable int id, @RequestBody RequestDepositor requestDepositor) {
 		ResponseDepositor responseDepositor = depositorService.updateDepositor(id, requestDepositor);
 		if(responseDepositor==null) {

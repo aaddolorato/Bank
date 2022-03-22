@@ -6,10 +6,11 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.accenture.bank.application.model.RequestTransaction;
@@ -27,7 +28,7 @@ public class TransactionController {
 	private TransactionService tService;
 
 	@Operation(summary = "Add Deposit Transaction", description = "Adds a Deposit Transaction linked to the specified (by its Id) Bank Account")
-	@RequestMapping(value = "/transaction/deposit/{id}", method = RequestMethod.POST)
+	@PostMapping("/transaction/deposit/{id}")
 	public ResponseEntity<Object> deposit(@PathVariable int id, @RequestBody  RequestTransaction requestTransaction) {
 		ResponseTransaction responseTransaction = tService.deposit(id, requestTransaction.getAmount());
 		if(responseTransaction==null) {
@@ -37,7 +38,7 @@ public class TransactionController {
 	}
 
 	@Operation(summary = "Bank Account's Transactions", description = "Shows the specified (by its Id) Bank Account's Transactions details")
-	@RequestMapping(value = "/transaction/bankaccount/{id}", method = RequestMethod.GET)
+	@GetMapping("/transaction/bankaccount/{id}")
 	public ResponseEntity<Object> getByIdBankAccount(@PathVariable int id){
 		List<ResponseTransaction> responseTransactionsList = tService.getByIdBankAccount(id);
 		if(responseTransactionsList==null) {
@@ -47,7 +48,7 @@ public class TransactionController {
 	}
 	
 	@Operation(summary = "Bank Account's last Transaction", description = "Shows the specified (by its Id) Bank Account's last Transaction's details")
-	@RequestMapping(value = "/transaction/bankaccount/last/{id}", method = RequestMethod.GET)
+	@GetMapping("/transaction/bankaccount/last/{id}")
 	public ResponseEntity<Object> getLastByIdBankAccount(@PathVariable int id) {
 		ResponseTransaction responseTransaction = tService.getLastByIdBankAccount(id);
 		if(responseTransaction==null) {
@@ -57,7 +58,7 @@ public class TransactionController {
 	}
 	
 	@Operation(summary = "Update Transaction", description = "Updates a specified (by its Id) Transaction and shows its details")
-	@RequestMapping(value = "/transaction/update/{id}", method = RequestMethod.PUT)
+	@PutMapping("/transaction/update/{id}")
 	public ResponseEntity<Object> updateTransaction(@RequestBody RequestTransaction requestTransaction, @PathVariable int id) {
 		ResponseTransaction responseTransaction = tService.updateTransaction(requestTransaction, id);
 		if(responseTransaction==null) {
@@ -67,7 +68,7 @@ public class TransactionController {
 	}
 
 	@Operation(summary = "Add a Withdraw Transaction", description = "Adds a withdraw Transaction linked to the specified (by its Id) Bank Account and shows its details")
-	@RequestMapping(value = "/transaction/withdraw/{id}", method = RequestMethod.POST)
+	@PostMapping("/transaction/withdraw/{id}")
 	public ResponseEntity<Object> withdraw(@PathVariable int id, @RequestBody RequestTransaction requestTransaction) throws ParseException {
 		ResponseTransaction responseTransaction = tService.withdraw(requestTransaction.getAmount(), id);
 		if(responseTransaction==null) {
@@ -77,7 +78,7 @@ public class TransactionController {
 	}
 	
 	@Operation(summary = "Transaction", description = "Shows the specified (by its Id) Transaction")
-	@RequestMapping(value = "/transaction/{id}", method = RequestMethod.GET)
+	@GetMapping("/transaction/{id}")
 	public ResponseEntity<Object> getByIdTransaction(@PathVariable int id) {
 		ResponseTransaction responseTransaction = tService.getByIdTransaction(id);
 		if(responseTransaction==null) {

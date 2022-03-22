@@ -1,8 +1,8 @@
 package com.accenture.bank.application.service;
 
 import java.util.ArrayList;
-
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,34 +24,31 @@ public class BankService {
 	@Autowired
 	private BankRepository bankRepository;
 
-	public BankService() {
-
-	}
-
 	public List<ResponseBank> getAllBanks(){
 		List<Bank> bankList = bankRepository.findAll();
+		List<ResponseBank> responseBankList = new ArrayList<>();
+		ModelMapper mapper = new ModelMapper();
+		ResponseBank responseBank = new ResponseBank();
+		for(Bank b : bankList) {
+			mapper.map(b, responseBank);
+			responseBankList.add(responseBank);
+		}
 		if(bankList.isEmpty()) {
 			log.error("Non è stato possibile recuperare la lista delle banche.", new ResponseStatusException(HttpStatus.NOT_FOUND));
-			return null;
-		}
-		else {
-			List<ResponseBank> responseBankList = new ArrayList<ResponseBank>();
-			for(Bank b : bankList) {
-				ResponseBank responseBank = new ResponseBank(b.getNome(), b.getId(), b.getSede());
-				responseBankList.add(responseBank);
-			}
-			log.info("Lista delle banche recuperata.");
 			return responseBankList;
 		}
+		log.info("Lista delle banche recuperata.");
+		return responseBankList;
 	}
 
 	public ResponseBank getBankById(int id) {
-		if(bankRepository.findById(id).isEmpty()) {
+		Optional<Bank> optionalBank = bankRepository.findById(id);
+		if(optionalBank.isEmpty()) {
 			log.error("Non è stata trovata nessuna banca con id {}.", id, new ResponseStatusException(HttpStatus.NOT_FOUND));
 			return null;
 		}
 		else {
-			Bank bank = bankRepository.findById(id).get();
+			Bank bank = optionalBank.get();
 			ModelMapper mapper = new ModelMapper();
 			ResponseBank rBank = new ResponseBank();
 			mapper.map(bank, rBank);
@@ -78,12 +75,13 @@ public class BankService {
 	}
 
 	public ResponseBank updateBank(int id, RequestBank requestBank){
-		if(bankRepository.findById(id).isEmpty()) {
+		Optional<Bank> optionalBank = bankRepository.findById(id);
+		if(optionalBank.isEmpty()) {
 			log.error("La banca con id {} non è presente nel sistema.", id, new ResponseStatusException(HttpStatus.NOT_FOUND));
 			return null;
 		}
 		else {
-			Bank bank = bankRepository.findById(id).get();
+			Bank bank = optionalBank.get();
 			ModelMapper mapper = new ModelMapper();
 			mapper.map(requestBank, bank);
 			bank.setId(id);
@@ -96,12 +94,13 @@ public class BankService {
 	}
 
 	public ResponseBank removeBank(int id) {
-		if(bankRepository.findById(id).isEmpty()) {
+		Optional<Bank> optionalBank = bankRepository.findById(id);
+		if(optionalBank.isEmpty()) {
 			log.error("Errore, la banca non esiste", new ResponseStatusException(HttpStatus.NOT_FOUND));
 			return null;
 		}
 		else {
-			Bank bank = bankRepository.findById(id).get();
+			Bank bank = optionalBank.get();
 			bankRepository.delete(bank);
 			ModelMapper mapper = new ModelMapper();
 			ResponseBank responseBank = new ResponseBank();
