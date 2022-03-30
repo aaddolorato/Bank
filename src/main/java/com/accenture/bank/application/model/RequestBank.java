@@ -21,6 +21,11 @@ public class RequestBank {
 		super();
 	}
 
+	public RequestBank(String nome, String sede) {
+		this.nome = nome;
+		this.sede = sede;
+	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}

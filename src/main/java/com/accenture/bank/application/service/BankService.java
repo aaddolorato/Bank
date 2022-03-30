@@ -28,8 +28,8 @@ public class BankService {
 		List<Bank> bankList = bankRepository.findAll();
 		List<ResponseBank> responseBankList = new ArrayList<>();
 		ModelMapper mapper = new ModelMapper();
-		ResponseBank responseBank = new ResponseBank();
 		for(Bank b : bankList) {
+			ResponseBank responseBank = new ResponseBank();
 			mapper.map(b, responseBank);
 			responseBankList.add(responseBank);
 		}

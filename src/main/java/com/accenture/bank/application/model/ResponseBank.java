@@ -18,14 +18,11 @@ public class ResponseBank {
 		
 	}
 
-	public ResponseBank(String nome, int id, String sede) {
+	public ResponseBank(String nome, String sede) {
 		
 		this.nome = nome;
-		this.id = id;
 		this.sede = sede;
 	}
-
-
 
 	public String getNome() {
 		return nome;
