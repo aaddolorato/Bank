@@ -19,5 +19,14 @@ public class RequestBankAccount {
 	private int iban;
 	@JsonProperty("balance")
 	private int balance;
+	
+	
+	public RequestBankAccount(int idDepositor, int idBank, int iban, int balance) {
+		super();
+		this.idDepositor = idDepositor;
+		this.idBank = idBank;
+		this.balance = balance;
+	}
 
+	
 }

@@ -35,7 +35,7 @@ public class BankAccountController {
 	@GetMapping("/accounts/depositors/{id}")
 	public ResponseEntity<Object> getByIdDepositor(@PathVariable int id){
 		List<ResponseBankAccount> accountsByIdDepositor = baService.getByIdDepositor(id);
-		if(accountsByIdDepositor==null) {
+		if(accountsByIdDepositor.isEmpty()) {
 			return new ResponseEntity<>("Non esistono conti intestati al correntista " + id + ".", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(accountsByIdDepositor, HttpStatus.OK);

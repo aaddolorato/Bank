@@ -98,6 +98,7 @@ public class BankAccountService {
 			while(existingIban(iban)!=null) {
 				iban = random.nextInt()*10000;
 			}
+			
 			BankAccount bankAccount = new BankAccount();
 			ModelMapper mapper = new ModelMapper();
 			mapper.map(requestBankAccount, bankAccount);
@@ -108,6 +109,7 @@ public class BankAccountService {
 			log.info("Il conto è stato registrato correttamente.");
 			return responseBankAccount;
 		}
+		
 		log.error("Impossibile registrare il conto. Non ci sono correntisti con id {}.", requestBankAccount.getIdDepositor(), new ResponseStatusException(HttpStatus.NOT_FOUND));
 		return null;
 	}

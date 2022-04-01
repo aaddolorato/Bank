@@ -1,6 +1,6 @@
 package com.accenture.bank.application.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,4 +25,13 @@ public class RequestTransaction {
 	
 	@JsonProperty("data_transazione")
 	private Date dateTransaction;
+
+	public RequestTransaction(int idBankAccount, int amount, String type, Date dateTransaction) {
+		this.idBankAccount = idBankAccount;
+		this.amount = amount;
+		this.type = type;
+		this.dateTransaction = dateTransaction;
+	}
+	
+	
 }

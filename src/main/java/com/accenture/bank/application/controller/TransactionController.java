@@ -41,7 +41,7 @@ public class TransactionController {
 	@GetMapping("/transaction/bankaccount/{id}")
 	public ResponseEntity<Object> getByIdBankAccount(@PathVariable int id){
 		List<ResponseTransaction> responseTransactionsList = tService.getByIdBankAccount(id);
-		if(responseTransactionsList==null) {
+		if(responseTransactionsList.isEmpty()) {
 			return new ResponseEntity<>("Non è stato possibile recuperare la lista delle transazione del conto con id " + id + ".", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(responseTransactionsList, HttpStatus.OK);

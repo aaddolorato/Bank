@@ -1,6 +1,6 @@
 package com.accenture.bank.application.model;
 
-import java.sql.Date;
+import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -25,4 +25,15 @@ public class RequestDepositor {
 	
 	@JsonProperty("data_nascita")
 	private Date birth;
+
+	public RequestDepositor(int idBank, String codFisc, String name, String surname, Date birth) {
+		super();
+		this.idBank = idBank;
+		this.codFisc = codFisc;
+		this.name = name;
+		this.surname = surname;
+		this.birth = birth;
+	}
+	
+	
 }
