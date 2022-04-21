@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="eng" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Add Bank</title>
+</head>
+<body>
+	<h1>Banks Management System</h1>
+	<h2>Add Bank</h2>
+	<form action="#" th:action="@{/banks/saveNew}" th:object="${bank}"
+		method="POST">
+		<input type="text" th:field="*{nome}" placeholder="Bank name"><br/>
+		<input type="text" th:field="*{sede}" placeholder="Bank Location"><br/>
+		<button type="submit">Save Bank</button><br/>
+	</form>
+</body>
+</html>

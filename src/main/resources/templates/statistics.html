@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="eng" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<h1>Banks and Depositors</h1>
+	<table>
+		<thead>
+			<tr>
+				<th>Number of Depositors</th>
+				<th>Bank Name</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr th:each="depositor : ${depositorsList}">
+				<td th:text=${depositor.count(id_correntista)}></td>
+				<td th:text=${depositor.nome_istituto}></td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>

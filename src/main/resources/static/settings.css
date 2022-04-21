@@ -1,0 +1,19 @@
+@charset "ISO-8859-1";
+table{
+	border: 1;
+	width: 75%;
+	border-collapse: collapse;
+	text-align: center;
+}
+td{
+	text-align: center;
+}
+h1{
+	text-align: center;
+	color :#02442c;
+}
+tr:hover{background-color : #04AA6D; color:white;}
+th {
+  background-color: #04AA6D;
+  color: white;
+}

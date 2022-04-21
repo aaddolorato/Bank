@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -32,6 +33,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldDeposit() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -47,6 +49,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotDepositDueToIdNotFound() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -62,6 +65,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotDepositDueToInsufficientAmount() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -77,6 +81,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldGetByIdBankAccount() throws Exception {
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/transaction/bankaccount/{id}", 1)
@@ -91,6 +96,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotGetByIdBankAccount() throws Exception {
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/transaction/bankaccount/{id}", 21)
@@ -99,6 +105,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldGetLastByIdBankAccount() throws Exception {
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/transaction/bankaccount/last/{id}", 4)
@@ -113,6 +120,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotGetLastByIdBankAccount() throws Exception {
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/transaction/bankaccount/last/{id}", 21)
@@ -121,6 +129,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldUpdate() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -136,6 +145,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotUpdateDueToIdNotFount() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -152,6 +162,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotUpdateDueToInvalidAmount() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -168,6 +179,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldWithdraw() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -183,6 +195,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotWithdrawDueToIdNotFound() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -198,6 +211,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotWithdrawDueToInsufficientAmount() throws Exception {
 		
 		String sDate="01/04/2022";
@@ -213,6 +227,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldGetByIdTransaction() throws Exception {
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/transaction/{id}", 38)
@@ -227,6 +242,7 @@ class TestTransaction extends BankApplicationTests{
 	}
 	
 	@Test
+	@Disabled("")
 	void shouldNotGetByIdTransaction() throws Exception {
 		
 		mockMvc.perform(MockMvcRequestBuilders.get("/transaction/{id}", 51)

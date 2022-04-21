@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="eng" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="ISO-8859-1">
+<title>Bank Management System</title>
+<link th:href="@{/settings.css}" rel="stylesheet" />
+</head>
+<body>
+		<h1>Bank List</h1>
+		<table>
+			<thead>
+				<tr>
+					<th>Bank Id</th>
+					<th>Bank Name</th>
+					<th>Bank Location</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="bank : ${banksList}">
+					<td th:text=${bank.id}></td>
+					<td th:text=${bank.nome}></td>
+					<td th:text=${bank.sede}></td>
+				</tr>
+			</tbody>
+		</table>
+</body>
+</html>
